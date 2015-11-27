@@ -1,7 +1,15 @@
 package forest.rice.field.k.medalist2.recycler;
 
-/**
- * Created by kazuaki on 2015/11/27.
- */
-public class MainContentViewHolder {
+import android.support.v7.widget.RecyclerView;
+import android.view.View;
+
+import forest.rice.field.k.medalist2.R;
+
+public class MainContentViewHolder extends RecyclerView.ViewHolder {
+
+    public static final int LAYOUT_ID = R.layout.main_content_row;
+
+    public MainContentViewHolder(View itemView) {
+        super(itemView);
+    }
 }
