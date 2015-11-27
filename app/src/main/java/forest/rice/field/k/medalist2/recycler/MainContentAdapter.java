@@ -1,18 +1,30 @@
 package forest.rice.field.k.medalist2.recycler;
 
 import android.support.v4.app.FragmentActivity;
+import android.support.v7.util.SortedList;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.ViewGroup;
 import android.widget.ListView;
 
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.RequestManager;
+
+import forest.rice.field.k.medalist2.entity.MedalEntity;
+
 public class MainContentAdapter extends RecyclerView.Adapter<MainContentViewHolder> {
     private final FragmentActivity fragmentActivity;
     private final LayoutInflater inflater;
+    private final RequestManager glide;
 
-    public MainContentAdapter(FragmentActivity fragmentActivity) {
+    private SortedList<MedalEntity> list;
+
+    public MainContentAdapter(FragmentActivity fragmentActivity, SortedList<MedalEntity> list) {
         this.fragmentActivity = fragmentActivity;
         this.inflater = LayoutInflater.from(fragmentActivity);
+        this.glide = Glide.with(fragmentActivity);
+
+        this.list = list;
     }
 
 
@@ -64,6 +76,11 @@ public class MainContentAdapter extends RecyclerView.Adapter<MainContentViewHold
     @Override
     public void onBindViewHolder(MainContentViewHolder holder, int position) {
 
+        MedalEntity entity = list.get(position);
+
+        holder.name.setText(entity.name);
+//        glide.load(entity.getMedalImage()).into(holder.medalImage);
+        glide.load(entity.getCharactorImage()).into(holder.medalImage);
     }
 
     /**
@@ -73,6 +90,6 @@ public class MainContentAdapter extends RecyclerView.Adapter<MainContentViewHold
      */
     @Override
     public int getItemCount() {
-        return 100;
+        return list.size();
     }
 }

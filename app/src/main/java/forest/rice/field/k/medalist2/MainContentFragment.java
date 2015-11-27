@@ -1,13 +1,22 @@
 package forest.rice.field.k.medalist2;
 
 
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v7.util.SortedList;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.squareup.okhttp.OkHttpClient;
+import com.squareup.okhttp.Request;
+import com.squareup.okhttp.Response;
+
+import java.io.IOException;
+
+import forest.rice.field.k.medalist2.entity.MedalEntity;
 import forest.rice.field.k.medalist2.recycler.MainContentAdapter;
 
 
@@ -25,6 +34,8 @@ public class MainContentFragment extends Fragment {
     // TODO: Rename and change types of parameters
     private String mParam1;
     private String mParam2;
+
+    private RecyclerView recyclerView;
 
 
     public MainContentFragment() {
@@ -63,9 +74,48 @@ public class MainContentFragment extends Fragment {
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_main_content, container, false);
 
-        RecyclerView recyclerView = (RecyclerView) view.findViewById(R.id.recycler_view);
-        recyclerView.setAdapter(new MainContentAdapter(getActivity()));
+        recyclerView = (RecyclerView) view.findViewById(R.id.recycler_view);
 
+        AsyncTask<String, String, String> task = new AsyncTask<String, String, String>() {
+            @Override
+            protected String doInBackground(String... params) {
+
+                String result = null;
+
+                Request request = new Request.Builder()
+                        .url("http://yw.b-boys.jp/member/maruwakalist_file/medallist.txt")
+                        .get()
+                        .build();
+
+                Request request1 = new Request.Builder()
+                        .url("http://yw.b-boys.jp/member/maruwakalist_file/medallist2.txt")
+                        .get()
+                        .build();
+
+                OkHttpClient client = new OkHttpClient();
+
+                try {
+                    Response response = client.newCall(request).execute();
+                    result = response.body().string();
+
+                    response = client.newCall(request1).execute();
+                    result = result + "\r\n" + response.body().string();
+
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+
+                return result;
+            }
+
+            @Override
+            protected void onPostExecute(String s) {
+
+                SortedList<MedalEntity> list = MedalEntity.createMedalEntityList(s);
+
+                recyclerView.setAdapter(new MainContentAdapter(getActivity(), list));
+            }
+        }.execute("");
 
         return view;
     }
